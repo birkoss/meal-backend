@@ -13,6 +13,23 @@ class index(APIView):
         return Response({'message': 'abc'})
 
 
+class userRegister(APIView):
+    def post(self, request, format=None):
+        serializer = UserSerializer(data=request.data)
+
+        if serialized.is_valid():
+            User.objects.create_user(
+                serialized.init_data['email'],
+                serialized.init_data['password']
+            )
+            return Response({
+                'status': status.HTTP_200_OK,
+                'item': serialized.data,
+            })
+        else:
+            return ResponseApiSerializerError(serialized)
+
+
 class mealList(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
