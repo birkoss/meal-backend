@@ -1,7 +1,7 @@
 from django.http import Http404
 
+from rest_framework import authentication, permissions
 from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -16,6 +16,9 @@ class index(APIView):
 
 
 class mealList(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
     def get(self, request, format=None):
         meals = Meal.objects.all() #filter(user=request.user)
         serialiser = MealSerializer(meals, many=True)
