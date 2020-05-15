@@ -20,13 +20,16 @@ class mealList(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
-        meals = Meal.objects.all() #filter(user=request.user)
+        meals = Meal.objects.filter(user=request.user)
         serialiser = MealSerializer(meals, many=True)
-        return Response(serialiser.data)
+        return Response({
+            'status': 'OK',
+            'items': serialiser.data,
+        })
 
     def post(self, request, format=None):
         data = request.data
-        #data['user'] = request.user.id
+        data['user'] = request.user.id
         serialiser = MealSerializer(data=data)
 
         if serialiser.is_valid():
@@ -38,6 +41,9 @@ class mealList(APIView):
 
 
 class mealDetail(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
     def get_object(self, pk):
         try:
             return Meal.objects.get(id=pk)
@@ -73,10 +79,16 @@ class mealDetail(APIView):
 
 
 class mealTypeList(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAdminUser]
+
     def get(self, request, format=None):
         types = MealType.objects.all()
         serialiser = MealTypeSerializer(types, many=True)
-        return Response(serialiser.data)
+        return Response({
+            'status': 'OK',
+            'items': serialiser.data
+        })
 
     def post(self, request, format=None):
         serialiser = MealTypeSerializer(data=request.data)
@@ -90,6 +102,9 @@ class mealTypeList(APIView):
 
 
 class mealTypeDetail(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAdminUser]
+
     def get_object(self, pk):
         try:
             return MealType.objects.get(id=pk)
