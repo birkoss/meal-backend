@@ -75,3 +75,5 @@ USE_TZ = True
 
 
 from .config import *
+
+TEMPLATES[0]['DIRS'].append( TEMPLATE_DIR )
