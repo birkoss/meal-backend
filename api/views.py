@@ -1,9 +1,9 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from recipe.models import Meal
+from recipe.models import Meal, MealType
 
-from .serializers import MealSerializer
+from .serializers import MealSerializer, MealTypeSerializer
 
 @api_view(['GET'])
 def index(request):
@@ -49,4 +49,44 @@ def mealDetail(request, pk):
         return Response(serializer.data)
     else:
         serialiser = MealSerializer(meal, many=False)
+        return Response(serialiser.data)
+
+
+@api_view(['GET', 'POST'])
+def mealTypeList(request):
+    if request.method == 'POST':
+        serialiser = MealTypeSerializer(data=request.data)
+
+        if serialiser.is_valid():
+            serialiser.save()
+        else:
+            return Response(serialiser.errors)
+
+        return Response(serialiser.data)
+    else:
+        types = MealType.objects.all()
+        serialiser = MealTypeSerializer(types, many=True)
+        return Response(serialiser.data)
+
+
+@api_view(['GET', 'POST', 'DELETE'])
+def mealTypeDetail(request, pk):
+    type = MealType.objects.get(id=pk)
+
+    if request.method == 'DELETE':
+        type.delete()
+        return Response({
+            "ok": "ok"
+        })
+    elif request.method == 'POST':
+        serializer = MealTypeSerializer(instance=type, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            return Response(serialiser.errors)
+
+        return Response(serializer.data)
+    else:
+        serialiser = MealTypeSerializer(type, many=False)
         return Response(serialiser.data)
