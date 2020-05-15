@@ -1,0 +1,11 @@
+# Generic files
+*.sqlite3
+._*
+.DS_Store
+__pycache__/
+tmp/
+passenger_wsgi.py
+stderr.log
+
+# Custom files
+meal/config.py
