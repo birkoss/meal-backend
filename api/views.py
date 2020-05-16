@@ -1,4 +1,5 @@
 from rest_framework import authentication, permissions, status
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -19,14 +20,17 @@ class userRegister(APIView):
         serializer = UserSerializer(data=request.data)
 
         if serializer.is_valid():
-            print(serializer.data)
-            User.objects.create_user(
+            user = User.objects.create_user(
                 serializer.data['email'],
                 request.data['password']
             )
+
+            token = Token.objects.get(user=user)
+
             return Response({
                 'status': status.HTTP_200_OK,
                 'item': serializer.data,
+                'token': token.key,
             })
         else:
             return ResponseApiSerializerError(serializer)
