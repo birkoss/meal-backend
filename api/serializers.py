@@ -7,7 +7,7 @@ from user.models import User
 class MealTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = MealType
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'slug']
 
 
 class RecipeSerializer(serializers.ModelSerializer):

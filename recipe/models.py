@@ -13,6 +13,7 @@ class Recipe(models.Model):
 
 class MealType(models.Model):
     name = models.CharField(max_length=100, default='')
+    slug = models.CharField(max_length=100, default='')
 
     def __str__(self):
         return self.name
