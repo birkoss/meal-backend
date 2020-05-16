@@ -14,6 +14,7 @@ urlpatterns = [
     path('meal-types/', views.mealTypeList.as_view(), name="api-meal-type-list"),
     path('meal-types/<str:pk>/', views.mealTypeDetail.as_view(), name="api-meal-type-detail"),
 
-    path('token-auth/', obtain_auth_token, name='api-token-auth'),
+    path('-token-auth/', obtain_auth_token, name='api-token-auth'),
     path('register/', views.userRegister.as_view(), name='api-register'),
+    path('login/', views.userLogin.as_view(), name='api-login'),
 ]

@@ -1,3 +1,5 @@
+from django.contrib.auth import login, authenticate
+
 from rest_framework import authentication, permissions, status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
@@ -13,6 +15,24 @@ from .serializers import MealSerializer, MealTypeSerializer, UserSerializer
 class index(APIView):
     def get(self, request, format=None):
         return Response({'message': 'abc'})
+
+
+class userLogin(APIView):
+    def post(self, request, format=None):
+
+        user = authenticate(request, email=request.data['email'], password=request.data['password'])
+        if user is not None:
+            login(request, user)
+
+            token = Token.objects.get(user=user)
+
+            return Response({
+                'status': status.HTTP_200_OK,
+                'item': request.data,
+                'token': token.key,
+            })
+        else:
+            return ResponseApiError()
 
 
 class userRegister(APIView):
@@ -34,8 +54,6 @@ class userRegister(APIView):
             })
         else:
             return ResponseApiSerializerError(serializer)
-
-        return Response("aaa")
 
 
 class mealList(APIView):
