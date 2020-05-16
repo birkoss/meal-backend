@@ -4,8 +4,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from recipe.models import Meal, MealType
+from user.models import User
 
-from .serializers import MealSerializer, MealTypeSerializer
+from .serializers import MealSerializer, MealTypeSerializer, UserSerializer
 
 
 class index(APIView):
@@ -17,17 +18,20 @@ class userRegister(APIView):
     def post(self, request, format=None):
         serializer = UserSerializer(data=request.data)
 
-        if serialized.is_valid():
+        if serializer.is_valid():
+            print(serializer.data)
             User.objects.create_user(
-                serialized.init_data['email'],
-                serialized.init_data['password']
+                serializer.data['email'],
+                request.data['password']
             )
             return Response({
                 'status': status.HTTP_200_OK,
-                'item': serialized.data,
+                'item': serializer.data,
             })
         else:
-            return ResponseApiSerializerError(serialized)
+            return ResponseApiSerializerError(serializer)
+
+        return Response("aaa")
 
 
 class mealList(APIView):
