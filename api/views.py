@@ -76,9 +76,7 @@ class mealList(APIView):
         if serialiser.is_valid():
             serialiser.save()
         else:
-            return Response({
-                serialiser.errors
-            })
+            return ResponseApiSerializerError(serialiser)
 
         return Response({
             'status': status.HTTP_200_OK,
