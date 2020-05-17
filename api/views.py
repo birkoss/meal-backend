@@ -1,4 +1,5 @@
 from django.contrib.auth import login, authenticate
+from django.db.models import Q
 
 from rest_framework import authentication, permissions, status
 from rest_framework.authtoken.models import Token
@@ -61,7 +62,19 @@ class mealList(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
-        meals = Meal.objects.filter(user=request.user)
+
+        filters = Q()
+        filters.add(Q(user=request.user), Q.AND)
+
+        date_start = request.GET.get('start', None)
+        if date_start:
+            filters.add(Q(day__gte=date_start), Q.AND)
+
+        date_end = request.GET.get('end', None)
+        if date_end:
+            filters.add(Q(day__lte=date_end), Q.AND)
+
+        meals = Meal.objects.filter(filters).order_by('day')
         serialiser = MealSerializer(meals, many=True)
         return Response({
             'status': status.HTTP_200_OK,
