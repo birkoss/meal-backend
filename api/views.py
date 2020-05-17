@@ -6,10 +6,10 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from recipe.models import Meal, MealType
+from recipe.models import Meal, MealType, Recipe
 from user.models import User
 
-from .serializers import MealSerializer, MealTypeSerializer, UserSerializer
+from .serializers import MealSerializer, MealTypeSerializer, RecipeSerializer, UserSerializer
 
 
 class index(APIView):
@@ -71,8 +71,9 @@ class mealList(APIView):
     def post(self, request, format=None):
         data = request.data
         data['user'] = request.user.id
-        serialiser = MealSerializer(data=data)
 
+        serialiser = MealSerializer(data=data)
+        print(data)
         if serialiser.is_valid():
             serialiser.save()
         else:
@@ -210,6 +211,39 @@ class mealTypeDetail(APIView):
         return Response(serializer.data)
 
 
+class recipeList(APIView):
+    def post(self, request, format=None):
+        data = request.data
+        data['user'] = request.user.id
+
+        serialiser = RecipeSerializer(data=data)
+        if serialiser.is_valid():
+            serialiser.save()
+        else:
+            return ResponseApiSerializerError(serialiser)
+
+        return Response({
+            'status': status.HTTP_200_OK,
+            'item': serialiser.data,
+        })
+
+
+class recipeSearch(APIView):
+    def get(self, request, format=None):
+        print( request.GET.get('search') )
+        if request.GET.get('search'):
+            recipes = Recipe.objects.filter(name__contains=request.GET.get('search'))
+
+            serializer = RecipeSerializer(recipes, many=True)
+
+            return Response({
+                'status': status.HTTP_200_OK,
+                'items': serializer.data,
+            })
+        
+        return ResponseApiError(status.HTTP_400_BAD_REQUEST)
+
+
 def ResponseApiError(status_code=status.HTTP_401_UNAUTHORIZED):
     message = {
         "status": status_code,
@@ -220,6 +254,9 @@ def ResponseApiError(status_code=status.HTTP_401_UNAUTHORIZED):
     if status_code == status.HTTP_404_NOT_FOUND:
         message['title'] = "Not Found"
         message['message'] = "The request has not been found."
+    elif status_code == status.HTTP_400_BAD_REQUEST:
+        message['title'] = "Bad Request"
+        message['message'] = "The request is not valid."
 
     return Response(message, status=status_code)
 

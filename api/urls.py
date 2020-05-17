@@ -9,6 +9,9 @@ urlpatterns = [
     path('meals/', views.mealList.as_view(), name="api-meal-list"),
     path('meals/<str:pk>/', views.mealDetail.as_view(), name="api-meal-detail"),
 
+    path('recipes/', views.recipeList.as_view(), name="api-recipe-list"),
+    path('recipes/search/', views.recipeSearch.as_view(), name="api-recipe-search"),
+
     path('meal-types/', views.mealTypeList.as_view(), name="api-meal-type-list"),
     path('meal-types/<str:pk>/', views.mealTypeDetail.as_view(), name="api-meal-type-detail"),
 

@@ -13,16 +13,25 @@ class MealTypeSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
-        fields = ['id', 'name', 'url']
+        fields = ['id', 'name', 'url', 'user']
+        extra_kwargs = {
+            'user': {'write_only': True},
+        }
 
 
 class MealSerializer(serializers.ModelSerializer):
-    type = MealTypeSerializer(many=False, read_only=True)
-    recipe = RecipeSerializer(many=False, read_only=True)
-
     class Meta:
         model = Meal
-        fields = ['id', 'date_added', 'day', 'type', 'recipe']
+        fields = ['id', 'date_added', 'day', 'type', 'recipe', 'user']
+        extra_kwargs = {
+            'user': {'write_only': True},
+        }
+
+    def to_representation(self, instance):
+        self.fields['type'] =  MealTypeSerializer(many=False, read_only=True)
+        self.fields['recipe'] =  RecipeSerializer(many=False, read_only=True)
+
+        return super(MealSerializer, self).to_representation(instance)
 
 
 class UserSerializer(serializers.ModelSerializer):
