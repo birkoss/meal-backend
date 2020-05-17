@@ -153,7 +153,8 @@ class mealDetail(APIView):
 
 class mealTypeList(APIView):
     authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
+    # https://stackoverflow.com/questions/35970970/django-rest-framework-permission-classes-of-viewset-method
 
     def get(self, request, format=None):
         types = MealType.objects.all()
@@ -163,15 +164,15 @@ class mealTypeList(APIView):
             'items': serialiser.data
         })
 
-    def post(self, request, format=None):
-        serialiser = MealTypeSerializer(data=request.data)
+    # def post(self, request, format=None):
+    #     serialiser = MealTypeSerializer(data=request.data)
 
-        if serialiser.is_valid():
-            serialiser.save()
-        else:
-            return ResponseApiSerializerError(serializer)
+    #     if serialiser.is_valid():
+    #         serialiser.save()
+    #     else:
+    #         return ResponseApiSerializerError(serializer)
 
-        return Response(serialiser.data)
+    #     return Response(serialiser.data)
 
 
 class mealTypeDetail(APIView):
