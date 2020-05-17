@@ -159,7 +159,7 @@ class mealTypeList(APIView):
         types = MealType.objects.all()
         serialiser = MealTypeSerializer(types, many=True)
         return Response({
-            'status': 'OK',
+            'status': status.HTTP_200_OK,
             'items': serialiser.data
         })
 
